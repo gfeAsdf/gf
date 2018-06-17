@@ -120,7 +120,7 @@
 }
 
 .char_performance {
-    width:175px;
+    width:195px;
     height:380px;
     float:left;
     margin:5px 3px 0px 0px;
@@ -131,7 +131,7 @@
 
 .char_performance .title {
     height:20px;
-    width:80px;
+    width:90px;
     margin:0px 0px 5px 0px;
     text-align:center;
     font-weight:bold;
@@ -141,7 +141,7 @@
 
 .char_performance .value {
     height:20px;
-    width:80px;
+    width:90px;
     margin:0px 0px 5px 0px;
     text-align:center;
     font-weight:bold;
@@ -311,6 +311,14 @@
 
 .button.extra {
     box-shadow:15px 0px 0px 0px #DFB6FF inset;
+}
+
+.button.unreleased {
+    box-shadow:15px 0px 0px 0px #FF6A38 inset;
+}
+
+.pick_button.unreleased {
+    box-shadow:15px 0px 0px 0px #FF6A38 inset;
 }
 
 .update_log {

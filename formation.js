@@ -31,6 +31,7 @@ const BUFF = "buff";
 const FORTRESS = "fortress";
 const ALLY = "ally";
 const EXTRA = "extra";
+const UNRELEASED = "unreleased";
 const CHAR_RARITY_LISTS = ["2", "3", "4", "5", "extra"];
 const CRI_RATE = "criRate";
 const VERSION = "version";
@@ -822,6 +823,10 @@ function openDialogPickerByType(type) {
     updatePickerByType(type, null);
 }
 
+function isUnreleased(id) {
+    return /^([0-9]{4,})$/.test(id);
+}
+
 function updatePickerByType(type, auraAttr) {
     for (var i in CHAR_RARITY_LISTS) {
         var nowVal = CHAR_RARITY_LISTS[i];
@@ -844,7 +849,11 @@ function updatePickerByType(type, auraAttr) {
             return result;
         });
         grepList.forEach(function(v) {
-            var item = $('<div></div>').addClass("pick_button hover rarity_"+nowVal).html(v.name).attr("value", v.id).click(function() {
+            var buttonClass = "pick_button hover rarity_"+nowVal;
+            if (isUnreleased(v.id)) {
+                buttonClass += " " + UNRELEASED;
+            }
+            var item = $('<div></div>').addClass(buttonClass).html(v.name).attr("value", v.id).click(function() {
                 addChar(mPickerGrid, $(this).attr("value"));
             });
 

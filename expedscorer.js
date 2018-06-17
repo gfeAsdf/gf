@@ -5,15 +5,20 @@ function p(){
             $.ajaxSetup({
                 async: false
             });
+			
+			var releasedStages = 6;
+			
             $.getJSON("expedscorer.json", function(data) {
                 $.each(data.expeds, function(key, val) {
+				    var boxNum = parseInt(idToEp(val.id));
+					if (boxNum <= releasedStages) {var checkReleased = true} else {checkReleased = false}
+					
                     var row = $('.tab_expedscorer .factory .expedNum').clone();
-                    $(".expedCheck input", row).attr("value", val.id);
+                    $(".expedCheck input", row).attr({value:val.id, checked:checkReleased});
                     $(".expedFixedCheck input", row).attr("value", val.id);
                     $(".expedText", row).text(idToCommonCalledId(val.id));
                     $(".expedTime", row).text(val.time.h + ":" + val.time.m);
-
-                    var boxNum = parseInt(idToEp(val.id));
+					
                     $(".tab_expedscorer .expedNumBox_"+boxNum).append( row );
                 });
             }).fail(function() {
@@ -24,9 +29,16 @@ function p(){
             $(".tab_expedscorer .expedNumBox")
                 .filter(function(i,x){return $(x).hasClass("expedNumBox_"+(i));})
                 .each(function(i,x){
+					if (i <= releasedStages) {
                     var
                         row = $('.tab_expedscorer .factory .expedNum').clone().addClass("expedWhole").removeClass("expedNum"),
                     val = true;
+					}
+					else {
+                    var
+                        row = $('.tab_expedscorer .factory .expedNum').clone().addClass("expedWhole").removeClass("expedNum"),
+                    val = false;
+					}
                     $("input",".expedCheck .expedNumBox_"+(i)).each(function(id,elm){
                         val&= $(elm).prop("checked");
                     });

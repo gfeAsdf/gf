@@ -80,14 +80,16 @@ $( document ).ready(function () {
 
 			$("body").prepend(
 				'<div id="secDiv">'+
-				'<h1>自動陣型配對機</h1><a href="https://github.com/chibimonxd/gf/releases/tag/0.1">查看使用方法</a><br /><br />'+
-				'輸出秒數: <input id="sec" value="'+_SEC +'"/> &nbsp; &nbsp; '+
-				'夜戰模式: <input id="nightBattle" type="checkbox" /> &nbsp; &nbsp; '+
-				'對Boss模式: <input id="bossMode" type="checkbox" /> &nbsp; &nbsp; '+ //night battle
-				'對裝甲單位: <input id="armorEnemy" type="checkbox" /> &nbsp; &nbsp; '+ //high armor enemy
-				'高迴避單位: <input id="dodgeEnemy" type="checkbox" /> &nbsp; &nbsp; '+ //high dodge enemy
-				'5號位放副坦: <input id="dpsSmgAtGrid5" type="checkbox" /> &nbsp; &nbsp; '+ //allow dps tank at grid 5
+
+				'<h1>Auto Formation Generator</h1><a href="https://github.com/chibimonxd/gf/releases/tag/0.1">查看使用方法</a><br /><br />'+
+				'Calculate for n seconds: <input id="sec" value="'+_SEC +'"/> &nbsp; &nbsp; '+
+				'Night Battle: <input id="nightBattle" type="checkbox" /> &nbsp; &nbsp; '+
+				'vs Boss: <input id="bossMode" type="checkbox" /> &nbsp; &nbsp; '+ //night battle
+				'Armored Enemy: <input id="armorEnemy" type="checkbox" /> &nbsp; &nbsp; '+ //high armor enemy
+				'Dodge Enemy: <input id="dodgeEnemy" type="checkbox" /> &nbsp; &nbsp; '+ //high dodge enemy
+				'Allow DPS SMG at Grid5: <input id="dpsSmgAtGrid5" type="checkbox" /> &nbsp; &nbsp; '+ //allow dps tank at grid 5
 				'</div>'+
+
 				charTable +
 				'<div id="selDiv"><br />'+
 				'<a href="#" onclick="document.title = \'HG/RF F陣\';findHGRF1()">HG/RF F陣</a> &nbsp; '+
@@ -106,8 +108,8 @@ $( document ).ready(function () {
 				'<a href="#" onclick="document.title = \'5AR b陣\';findAR2()">5AR b陣</a> &nbsp; <br /><br />'+
 				'<img src="images/grid.png" />'+
 				'<br /><br /><br /><br />  &nbsp;' +
-				'<a href="https://github.com/chibimonxd/gf">Github</a><br /><br /> &nbsp;' +
-				'<a href="https://github.com/ynntk4815/gf">傷害計算核心來自ynntk4815陣型計算機</a><br /><br /> &nbsp;' +
+				'<a href="https://github.com/chibimonxd/gf">Original Auto Formation by chibimonxd</a><br /><br /> &nbsp;' +
+				'<a href="https://github.com/ynntk4815/gf">Original DPS/Formation sim by ynntk4815</a><br /><br /> &nbsp;' +
 				'</div>'
 			);
 			
@@ -278,15 +280,17 @@ function initTable() {
 	$("body").prepend('<div id="percentDiv"></div>');
 	
 	
-	var btoptions = (_nightBattle?',夜戰模式':'')+
-					(_bossMode?',對Boss模式':'')+
-					(_armorEnemy?',對裝甲單位':'')+
-					(_dodgeEnemy?',高迴避單位':'');
+	var btoptions = (_nightBattle?',Night Battle':'')+
+					(_bossMode?',vs Boss':'')+
+					(_armorEnemy?',Armored Enemy':'')+
+					(_dodgeEnemy?',Dodge Enemy':'');
 	
 	var resultHtml = "<table border='1' width='100%'>"+
 			"<tr>"+
-				"<th>"+_SEC + "秒傷害"+"</th>"+
-				"<th>隊伍編成(全技能,好感100"+btoptions+")</th>"+
+
+				"<th>Total Damage in "+_SEC + "s"+"</th>"+
+				"<th>Formation(All Skills, 100 Affection"+btoptions+")</th>"+
+
 			"</tr>";
 	resultHtml += "</table>";
 
@@ -584,15 +588,16 @@ function startWorker(LOC1,LOC2,LOC3,LOC4,LOC5,
 
 							getDateDiff(new Date(), startTime);
 							
-							var btoptions = (_nightBattle?',夜戰模式':'')+
-											(_bossMode?',對Boss模式':'')+
-											(_armorEnemy?',對裝甲單位':'')+
-											(_dodgeEnemy?',高迴避單位':'');
+							var btoptions = (_nightBattle?',Night Battle':'')+
+											(_bossMode?',vs Boss':'')+
+											(_armorEnemy?',Armored Enemy':'')+
+											(_dodgeEnemy?',Dodge Enemy':'');
 							
 							var resultHtml = "<table border='1' width='100%'>"+
 									"<tr>"+
-										"<th>"+_SEC + "秒傷害"+"</th>"+
-										"<th>隊伍編成(全技能,好感100"+btoptions+")</th>"+
+										"<th>Total Damage within "+_SEC + "s"+"</th>"+
+										"<th>Formation(All Skills, 100 Affection"+btoptions+")</th>"+
+
 									"</tr>";
 
 							for (var g = 0; g < RESULTLIST.length;g++) {

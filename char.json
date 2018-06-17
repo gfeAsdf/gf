@@ -4406,6 +4406,36 @@
                 {"x":1, "y":0},
                 {"x":0, "y":-1},
                 {"x":1, "y":-1}]}},
+				
+	{"id":"20039", "name":"莫辛-納甘", "type":"rf", "rarity":"5", "mod":true,
+        "hp":{"mod1":90, "mod2":90, "mod3":91},
+        "dmg":{"mod1":134, "mod2":135, "mod3":136},
+        "dodge":{"mod1":39, "mod2":39, "mod3":40},
+        "hit":{"mod1":87, "mod2":88, "mod3":89},
+        "fireOfRate":{"mod1":31, "mod2":31, "mod3":31},
+        "skill":{
+            "name":"沉穩射擊",
+            "type":"attack",
+            "target":"enemy_farthest",
+            "firstCooldownTime":"10",
+            "cooldownTime":{"1":"20", "10": "16"},
+            "prepareTime":"1.5",
+            "effect":{
+                "attack":{"1":"3.2", "10":"6.5"},
+                "time":{"1":"", "10":""}}},
+		"mod2Skill":{
+            "name":"蒼白收割者",
+            "detailText":{
+                "val":"普通攻擊擊殺敵人後提升自身傷害{2}%,持續{1}秒<br>技能擊殺敵人後提升自身射速{0}%"},
+            "effects":[
+                {"filter":"active", "type":"buff", "target":"self","attribute":"fireOfRate", "value":{"1":15, "10":30}, "time":{"1":3, "10":3}},
+				{"filter":"active", "type":"buff", "target":"self","attribute":"dmg", "value":{"1":0, "10":0}, "time":{"1":3, "10":3}}
+            ]},
+        "aura":{
+            "target":"hg", "effect":{
+                "cooldownTime":{"1":"18", "5":"18"}},
+            "grid":[
+                {"x":"0", "y":"1"}]}},			
     {"id":"20057", "name":"ST AR-15", "type":"ar", "rarity":"5", "mod":true,
         "hp":{"mod1":106, "mod2":107, "mod3":108},
         "dmg":{"mod1":49, "mod2":49, "mod3":50},
@@ -5175,12 +5205,79 @@
             "self":{"x":1, "y":0},
             "grid":[
                 {"x":-1, "y":0}]}},
+
+
+    {"id":"0030001", "name":"克莉爾", "type":"hg", "rarity":"extra",
+        "hp":{"1":"35", "100":"66"},
+        "dmg":{"1":"11", "100":"31"},
+        "dodge":{"1":"11", "100":"88"},
+        "hit":{"1":"6", "100":"62"},
+        "fireOfRate":{"1":"29", "100":"61"},
+        "skill":{
+            "name":"再接再厲！",
+            "type":"buff",
+            "target":"ally",
+            "firstCooldownTime":"6",
+            "detailText":{
+                "0":"暫停普通攻擊並進行五次演奏<br />每次提升隨機一位隊友的火力和命中30%(裝備“榮耀之光”後提升至40%)<br />效果可疊加1層<br />每層持續3秒。",
+                "format":[]},
+            "cooldownTime":{"1":"15", "10": "12"},
+            "effect":{
+				"dmg":{"1":"9", "10":"18"},
+				"time":{"1":"6","10":"6"}}},
+        "aura":{
+            "target":"all", "effect":{
+                "fireOfRate":{"1":"15", "5":"30"}, "hit":{"1":"25", "5":"50"}},
+            "grid":[
+
+                {"x":"-1", "y":"1"},
+                {"x":"0", "y":"1"},
+                {"x":"-1", "y":"0"},
+                {"x":"-1", "y":"-1"},
+                {"x":"0", "y":"-1"}]}},
+
+
+    {"id":"0030002", "name":"菲爾", "type":"hg", "rarity":"extra",
+        "hp":{"1":"35", "100":"66"},
+        "dmg":{"1":"11", "100":"31"},
+        "dodge":{"1":"11", "100":"87"},
+        "hit":{"1":"6", "100":"62"},
+        "fireOfRate":{"1":"29", "100":"61"},
+        "skill":{
+            "name":"慢慢來吧～",
+            "type":"",
+            "target":"",
+            "firstCooldownTime":"6",
+			"detailText":{
+                "0":"暫停普通攻擊並進行五次演奏<br />每次降低隨機3名敵方單位的射速和命中12%(裝備“漆黑之貓”後提升至15%)<br />效果可疊加2層<br />每層持續3秒。",
+                "format":[]},
+            "cooldownTime":{"1":"15", "10": "12"},
+            "effect":{
+			},
+            "effectNight":{
+			}},
+        "aura":{
+            "target":"all", "effect":{
+                "dmg":{"1":"15", "5":"30"},
+                "hit":{"1":25, "5":50}},
+            "grid":[
+
+                {"x":"0", "y":"1"},
+                {"x":"1", "y":"1"},
+                {"x":"1", "y":"0"},
+                {"x":"0", "y":"-1"},
+                {"x":"1", "y":"-1"}]}},
+
+
+
+
     {"id":"0073", "name":"AUG", "type":"ar", "rarity":"5",
         "hp":{"1":61, "100":121},
         "dmg":{"1":21, "100":55},
         "hit":{"1":7, "100":57},
         "dodge":{"1":7, "100":46},
         "fireOfRate":{"1":50, "100":75},
+        "criRate":30,
         "skill":{
             "name":"Rain of Burial",
             "firstCooldownTime":4,
@@ -5201,7 +5298,83 @@
                 {"x":0, "y":-1},
                 {"x":1, "y":0},
                 {"x":1, "y":1},
-                {"x":1, "y":-1}]}}
+                {"x":1, "y":-1}]}},
+	{"id":"00221", "name":"Gsh-18", "type":"hg", "rarity":"3",
+        "hp":{"1":35, "100":70},
+        "dmg":{"1":13, "100":33},
+        "dodge":{"1":12, "100":86},
+        "hit":{"1":7, "100":48},
+        "fireOfRate":{"1":36, "100":52},
+        "skill":{
+            "name":"鎖鏈衝擊",
+            "firstCooldownTime":6,
+            "cooldownTime":{"1":15, "10":12},
+            "detailText":{
+                "0":"技能期間使用雙槍攻擊，造成兩次傷害且必定暴擊，持續{0}秒",
+                "format":[{"textIndex":0, "effectIndex":0, "attr":"time"}]},
+            "effects":[
+                {"filter":"active", "type":"buff", "target":"self","attribute":"criRate", "value":{"1":500, "10":500}, "time":{"1":3, "10":6}},
+                {"filter":"attack", "buffFilter":"鎖鏈衝擊", "type":"attack", "target":"enemy", "value":{"0":1}}
+            ]},
+        "aura":{
+            "target":"all", "effect":{
+                "dmg":{"1":12,"5":24},
+                "hit":{"1":20,"5":40}},
+            "grid":[
+                {"x":0, "y":1},
+                {"x":0, "y":-1},
+				{"x":-1, "y":0},
+				{"x":-1, "y":1},
+                {"x":-1, "y":-1}]}},
+				
+    {"id":"00222", "name":"TAC-50", "type":"rf", "rarity":"5",
+        "hp":{"1":"44", "100":"87"},
+        "dmg":{"1":"52", "100":"155"},
+        "dodge":{"1":"4", "100":"31"},
+        "hit":{"1":"10", "100":"83"},
+        "fireOfRate":{"1":"21", "100":"32"},
+        "skill":{
+            "name":"楓華螢火",
+            "type":"attack",
+            "target":"enemy_specific",
+            "firstCooldownTime":"10",
+            "cooldownTime":{"1":"20", "10": "16"},
+            "detailText":{
+                "0":"被動：技能冷卻結束后，TAC的無人機會標記隨機敵人(每秒刷新一次)。<br />主動：對被標記的敵人進行一次可以暴擊的狙擊，造成4.5倍的傷害。<br />前置冷卻10秒，冷卻時間:16秒",
+                "format":[]},
+            "effect":{
+                "attack":{"1":"2.5", "10":"4.5"},
+                "time":{"1":"", "10":""}}},
+        "aura":{
+            "target":"hg", "effect":{
+                "cooldownTime":{"1":"18", "5":"18"}},
+            "grid":[
+                {"x":1, "y":1},
+                {"x":1, "y":0}]}},
+	
+	{"id":"00218", "name":"T77", "type":"smg", "rarity":"3",
+        "hp":{"1":"93", "100":"186"},
+        "dmg":{"1":"10", "100":"24"},
+        "dodge":{"1":"10", "100":"70"},
+        "hit":{"1":"2", "100":"12"},
+        "fireOfRate":{"1":"66", "100":"92"},
+        "skill":{
+            "name":"掩護專注T",
+            "type":"buff",
+            "target":"self",
+            "firstCooldownTime":"5",
+            "cooldownTime":{"1":"20", "10": "16"},
+            "effect":{
+                "dodge":{"1":"22", "10":"40"},
+                "time":{"1":"9", "10":"15"}}},
+        "aura":{
+            "target":"ar", "effect":{
+                "fireOfRate":{"1":"12", "5":"12"}},
+            "grid":[
+                {"x":"-1", "y":"1"},
+				{"x":"-1", "y":"0"},
+                {"x":"-1", "y":"-1"}]}}
+	
 ], "attackFrame":[
     {"id":"00208", "frame":9},
     {"id":"00173", "frame":11},

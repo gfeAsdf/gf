@@ -5,9 +5,26 @@
 var _SEC = 8; //<------second
 var buffer = 0.9;
 
+var _nightBattle = false;
+var _bossMode = true;
+var _armorEnemy  = false;
+var _dodgeEnemy = false;
 
+var _dpsSmgAtGrid5 = false;
 
 var __gridToUi = null;
+
+var dpsSmg = [
+		135, //SR-3MP
+		136, //PP-19
+		20, //Vector
+		203, //密獾
+		22, //PPS-43
+		177, //KLIN
+		20094, //64式
+		27, //蠍式
+		20093 //IDW
+	];
 
 $( document ).ready(function () {
 
@@ -36,9 +53,21 @@ $( document ).ready(function () {
 
 					for (var j = 0; j < mCharData.length;j++) {
 						if (mCharData[j].version == "cn") continue;
+						
+						if (mCharData[j].id.startsWith("00")) continue; //for eng ver
+						
 						if (mCharData[j].type != typeArray[i]) continue;
 						if (mCharData[j].rarity != (rarity==6?"extra":rarity)) continue;
-						charTable += "<input class='checkB checkRare"+ rarity +" checkType"+ typeArray[i] +"' type='checkbox' value='" + mCharData[j].id + "'>" + mCharData[j].name + "<br />";
+						charTable += "<input class='checkB checkRare"+ rarity +" checkType"+ typeArray[i] +"' type='checkbox' value='" + mCharData[j].id + "'>" + 
+
+									mCharData[j].name +
+									(
+										("," + dpsSmg.join(",") + ",").indexOf("," + mCharData[j].id + ",") != -1?
+										"(副坦)": //DPS SMG
+										""
+									) +
+
+									"<br />";
 					}
 					charTable += "</td>";
 				}
@@ -51,8 +80,16 @@ $( document ).ready(function () {
 
 			$("body").prepend(
 				'<div id="secDiv">'+
-				'<h1>Auto Formation Generator</h1>'+
-				'Calculate for n seconds: <input id="sec" value="'+_SEC +'"/></div>'+
+
+				'<h1>Auto Formation Generator</h1><a href="https://github.com/chibimonxd/gf/releases/tag/0.1">查看使用方法</a><br /><br />'+
+				'Calculate for n seconds: <input id="sec" value="'+_SEC +'"/> &nbsp; &nbsp; '+
+				'Night Battle: <input id="nightBattle" type="checkbox" /> &nbsp; &nbsp; '+
+				'vs Boss: <input id="bossMode" type="checkbox" /> &nbsp; &nbsp; '+ //night battle
+				'Armored Enemy: <input id="armorEnemy" type="checkbox" /> &nbsp; &nbsp; '+ //high armor enemy
+				'Dodge Enemy: <input id="dodgeEnemy" type="checkbox" /> &nbsp; &nbsp; '+ //high dodge enemy
+				'Allow DPS SMG at Grid5: <input id="dpsSmgAtGrid5" type="checkbox" /> &nbsp; &nbsp; '+ //allow dps tank at grid 5
+				'</div>'+
+
 				charTable +
 				'<div id="selDiv"><br />'+
 				'<a href="#" onclick="document.title = \'HG/RF F陣\';findHGRF1()">HG/RF F陣</a> &nbsp; '+
@@ -67,6 +104,8 @@ $( document ).ready(function () {
 				'<a href="#" onclick="document.title = \'MG/SG/HG |:陣\';findMGSG3()">MG/SG/HG |:陣</a> &nbsp; ' +
 				'<a href="#" onclick="document.title = \'MG/SG/HG 74196\';findMGSG4()">MG/SG/HG 74196</a> &nbsp; '+
 				'<a href="#" onclick="document.title = \'MG/SG/HG 74163\';findMGSG5()">MG/SG/HG 74163</a> &nbsp; <br /><br />'+
+				'<a href="#" onclick="document.title = \'5AR F陣\';findAR1()">5AR F陣</a> &nbsp; '+
+				'<a href="#" onclick="document.title = \'5AR b陣\';findAR2()">5AR b陣</a> &nbsp; <br /><br />'+
 				'<img src="images/grid.png" />'+
 				'<br /><br /><br /><br />  &nbsp;' +
 				'<a href="https://github.com/chibimonxd/gf">Original Auto Formation by chibimonxd</a><br /><br /> &nbsp;' +
@@ -226,15 +265,32 @@ function _gridToUi(grid, elementName) {
 
 function initTable() {
 	_SEC = $("#sec").val();
+	
+	_nightBattle = $("#nightBattle").prop("checked");
+	_bossMode = $("#bossMode").prop("checked");
+	_armorEnemy  = $("#armorEnemy").prop("checked");
+	_dodgeEnemy  = $("#dodgeEnemy").prop("checked");
+
+	_dpsSmgAtGrid5  = $("#dpsSmgAtGrid5").prop("checked");
+	
 	$("body > a").remove();
 	$("body > div > table").css("display","none");
 	$("#secDiv").css("display","none");
 	$("#selDiv").css("display","none");
 	$("body").prepend('<div id="percentDiv"></div>');
+	
+	
+	var btoptions = (_nightBattle?',Night Battle':'')+
+					(_bossMode?',vs Boss':'')+
+					(_armorEnemy?',Armored Enemy':'')+
+					(_dodgeEnemy?',Dodge Enemy':'');
+	
 	var resultHtml = "<table border='1' width='100%'>"+
 			"<tr>"+
-				"<th>"+_SEC + "DPS"+"</th>"+
-				"<th>隊伍編成(全技能,好感100)</th>"+
+
+				"<th>Total Damage in "+_SEC + "s"+"</th>"+
+				"<th>Formation(All Skills, 100 Affection"+btoptions+")</th>"+
+
 			"</tr>";
 	resultHtml += "</table>";
 
@@ -251,7 +307,10 @@ function initTable() {
 	for (var i = 0; i < mCharData.length;i++) {
 
 		var isUseSkill = true;
-		if (mCharData[i].name == "競爭者") isUseSkill = false;
+		
+		if (!_bossMode) {
+			if (mCharData[i].name == "競爭者") isUseSkill = false;
+		}
 		//if (mCharData[i].name == "K2") isUseSkill = false;
 		
 		mCharData[i].isUseSkill = isUseSkill;
@@ -304,6 +363,28 @@ function startWorker(LOC1,LOC2,LOC3,LOC4,LOC5,
 		ARR4 = ARR4.slice();
 		ARR5 = ARR5.slice();
 		
+		if (!_dpsSmgAtGrid5) {
+			if (LOC1 == 5) {
+				ARR1 = ARR1.filter(v => ("," + dpsSmg.join(",") + ",").indexOf(","+v.id+",") == -1);
+			}
+			if (LOC2 == 5) {
+				ARR2 = ARR2.filter(v => ("," + dpsSmg.join(",") + ",").indexOf(","+v.id+",") == -1);
+			}
+			if (LOC3 == 5) {
+				ARR3 = ARR3.filter(v => ("," + dpsSmg.join(",") + ",").indexOf(","+v.id+",") == -1);
+			}
+			if (LOC4 == 5) {
+				ARR4 = ARR4.filter(v => ("," + dpsSmg.join(",") + ",").indexOf(","+v.id+",") == -1);
+			}
+			if (LOC5 == 5) {
+				ARR5 = ARR5.filter(v => ("," + dpsSmg.join(",") + ",").indexOf(","+v.id+",") == -1);
+			}
+			
+		}
+		
+		
+		
+		
 		if (ARR1.length * ARR2.length < threadCount) {
 			threadCount = ARR1.length * ARR2.length;
 		}
@@ -322,7 +403,7 @@ function startWorker(LOC1,LOC2,LOC3,LOC4,LOC5,
 		//create job list
 		for (var i = 0; i < ARR1.length; i++) {
 			for (var j = 0; j < ARR2.length; j++) {
-				if (j == 0) {
+				if (i == ARR1.length-1) {
 					firstRound += remainingList.length + ",";
 				}
 				remainingList[remainingList.length] = [[ARR1[i]], [ARR2[j]],remainingList.length];
@@ -330,15 +411,19 @@ function startWorker(LOC1,LOC2,LOC3,LOC4,LOC5,
 
 			}
 		}
-
+		
+		var firstCharId = null;
 		
 		for (var i = 0; i < threadCount; i++) {
 			
 			var nextJob = remainingList.pop();
+			if (firstCharId == null) {
+				firstCharId = nextJob[0][0].id;
+			}
 			w[i].postMessage([
 				i,
 				LOC1,LOC2,LOC3,LOC4,LOC5,
-				nextJob[0],nextJob[1],ARR3,ARR4,ARR5,mCharData,mAttackFrameData,mEquipmentData,mStringData,mUpdate,mFairyData,_SEC,nextJob[2]]);
+				nextJob[0],nextJob[1],ARR3,ARR4,ARR5,mCharData,mAttackFrameData,mEquipmentData,mStringData,mUpdate,mFairyData,_SEC,nextJob[2],_nightBattle,_bossMode,_armorEnemy,_dodgeEnemy]);
 			w[i].onmessage = function(event) {
 				if (event.data[0] == "done") {
 					doneCount++;
@@ -430,25 +515,38 @@ function startWorker(LOC1,LOC2,LOC3,LOC4,LOC5,
 							ARR5.sort(function(a, b){return b.used5-a.used5});
 
 							
-							if (unlockGunRemoval || ((RESULTLIST.length > 200) && (RESULTLIST[199].dps > highestDps *0.7))) {
-								unlockGunRemoval = true;
+							var sumP = 0;
+							for (var g = 0; g < percentArr.length;g++) {
+								sumP += percentArr[g]/percentArr.length;
+							}
+							if (
+								(
+									unlockGunRemoval || 
+									((RESULTLIST.length > 200) && (RESULTLIST[199].dps > highestDps *0.7))
+								)  && (firstRound == ",")
+							) {
+								if (!unlockGunRemoval) {
+									unlockGunRemoval = true;
+									console.log("unlocked");
+								}
+
 								
 								if ((doneCount > ARR2_SKIP) && (firstRound == ",")) {
-									while (ARR2.length-1 > 0 && ARR2[ARR2.length-1].used2 == 0) {
+									while (ARR2.length-1 > 0 && ARR2[ARR2.length-1].used2 == 0 && ARR2[ARR2.length-1].id != firstCharId) {
 										console.log(2, ARR2[ARR2.length-1].name); 
 										ARR2.pop();
 									}
 								}
 								
-								while (ARR3.length-1 > 0 && ARR3[ARR3.length-1].used3 == 0) {
+								while (ARR3.length-1 > 0 && ARR3[ARR3.length-1].used3 == 0 && ARR3[ARR3.length-1].id != firstCharId) {
 									console.log(3, ARR3[ARR3.length-1].name); 
 									ARR3.pop();
 								}
-								while (ARR4.length-1 > 0 && ARR4[ARR4.length-1].used4 == 0) {
+								while (ARR4.length-1 > 0 && ARR4[ARR4.length-1].used4 == 0 && ARR4[ARR4.length-1].id != firstCharId) {
 									console.log(4, ARR4[ARR4.length-1].name); 
 									ARR4.pop();
 								}
-								while (ARR5.length-1 > 0 && ARR5[ARR5.length-1].used5 == 0) {
+								while (ARR5.length-1 > 0 && ARR5[ARR5.length-1].used5 == 0 && ARR4[ARR4.length-1].id != firstCharId) {
 									console.log(5, ARR5[ARR5.length-1].name); 
 									ARR5.pop();
 								}
@@ -463,19 +561,19 @@ function startWorker(LOC1,LOC2,LOC3,LOC4,LOC5,
 								w[event.data[1]].postMessage([
 									event.data[1],
 									LOC1,LOC2,LOC3,LOC4,LOC5,
-									nextJob[0],nextJob[1],ARR3,ARR4,ARR5,mCharData,mAttackFrameData,mEquipmentData,mStringData,mUpdate,mFairyData,_SEC,nextJob[2]]);
+									nextJob[0],nextJob[1],ARR3,ARR4,ARR5,mCharData,mAttackFrameData,mEquipmentData,mStringData,mUpdate,mFairyData,_SEC,nextJob[2],_nightBattle,_bossMode,_armorEnemy,_dodgeEnemy]);
 							} else {
 								//direct Done
 								w[event.data[1]].postMessage([
 									event.data[1],
 									LOC1,LOC2,LOC3,LOC4,LOC5,
-									nextJob[0],null,ARR3,ARR4,ARR5,mCharData,mAttackFrameData,mEquipmentData,mStringData,mUpdate,mFairyData,_SEC,nextJob[2]]);
+									nextJob[0],null,ARR3,ARR4,ARR5,mCharData,mAttackFrameData,mEquipmentData,mStringData,mUpdate,mFairyData,_SEC,nextJob[2],_nightBattle,_bossMode,_armorEnemy,_dodgeEnemy]);
 							}
 						} else {
 							w[event.data[1]].postMessage([
 								event.data[1],
 								LOC1,LOC2,LOC3,LOC4,LOC5,
-								nextJob[0],nextJob[1],ARR3,ARR4,ARR5,mCharData,mAttackFrameData,mEquipmentData,mStringData,mUpdate,mFairyData,_SEC,nextJob[2]]);
+								nextJob[0],nextJob[1],ARR3,ARR4,ARR5,mCharData,mAttackFrameData,mEquipmentData,mStringData,mUpdate,mFairyData,_SEC,nextJob[2],_nightBattle,_bossMode,_armorEnemy,_dodgeEnemy]);
 						}
 					} else {
 						threadDone[event.data[1]] = true;
@@ -489,10 +587,17 @@ function startWorker(LOC1,LOC2,LOC3,LOC4,LOC5,
 							console.log(RESULTLIST);
 
 							getDateDiff(new Date(), startTime);
+							
+							var btoptions = (_nightBattle?',Night Battle':'')+
+											(_bossMode?',vs Boss':'')+
+											(_armorEnemy?',Armored Enemy':'')+
+											(_dodgeEnemy?',Dodge Enemy':'');
+							
 							var resultHtml = "<table border='1' width='100%'>"+
 									"<tr>"+
-										"<th>"+_SEC + "秒傷害"+"</th>"+
-										"<th>Formation(All Skills, 100 Affection)</th>"+
+										"<th>Total Damage within "+_SEC + "s"+"</th>"+
+										"<th>Formation(All Skills, 100 Affection"+btoptions+")</th>"+
+
 									"</tr>";
 
 							for (var g = 0; g < RESULTLIST.length;g++) {
@@ -962,13 +1067,13 @@ function findSMGAR1() {
 		mCharData[i].used3 = 0;
 		mCharData[i].used4 = 0;
 		mCharData[i].used5 = 0;
-		if (mCharData[i].type == "ar") {
+		if ((mCharData[i].type == "ar") || (mCharData[i].name == "UMP40")) {
 			ar[ar.length] = mCharData[i];
 		}
 		if (mCharData[i].type == "smg") {
 			smg[smg.length] = mCharData[i];
 		}
-		if ((mCharData[i].type == "ar") || (mCharData[i].type == "hg")) {
+		if (((mCharData[i].type == "ar") || (mCharData[i].name == "UMP40")) || (mCharData[i].type == "hg")) {
 			arhg[arhg.length] = mCharData[i];
 		}
 		if ((mCharData[i].type == "smg") || (mCharData[i].type == "hg")) {
@@ -1049,13 +1154,13 @@ function findSMGAR2() {
 		mCharData[i].used3 = 0;
 		mCharData[i].used4 = 0;
 		mCharData[i].used5 = 0;
-		if (mCharData[i].type == "ar") {
+		if ((mCharData[i].type == "ar") || (mCharData[i].name == "UMP40")) {
 			ar[ar.length] = mCharData[i];
 		}
 		if (mCharData[i].type == "smg") {
 			smg[smg.length] = mCharData[i];
 		}
-		if ((mCharData[i].type == "ar") || (mCharData[i].type == "hg")) {
+		if (((mCharData[i].type == "ar") || (mCharData[i].name == "UMP40")) || (mCharData[i].type == "hg")) {
 			arhg[arhg.length] = mCharData[i];
 		}
 		if ((mCharData[i].type == "smg") || (mCharData[i].type == "hg")) {
@@ -1128,13 +1233,13 @@ function findSMGAR3() {
 		mCharData[i].used3 = 0;
 		mCharData[i].used4 = 0;
 		mCharData[i].used5 = 0;
-		if (mCharData[i].type == "ar") {
+		if ((mCharData[i].type == "ar") || (mCharData[i].name == "UMP40")) {
 			ar[ar.length] = mCharData[i];
 		}
 		if (mCharData[i].type == "smg") {
 			smg[smg.length] = mCharData[i];
 		}
-		if ((mCharData[i].type == "ar") || (mCharData[i].type == "hg")) {
+		if (((mCharData[i].type == "ar") || (mCharData[i].name == "UMP40")) || (mCharData[i].type == "hg")) {
 			arhg[arhg.length] = mCharData[i];
 		}
 		if ((mCharData[i].type == "smg") || (mCharData[i].type == "hg")) {
@@ -1216,13 +1321,13 @@ function findSMGAR4() {
 		mCharData[i].used3 = 0;
 		mCharData[i].used4 = 0;
 		mCharData[i].used5 = 0;
-		if (mCharData[i].type == "ar") {
+		if ((mCharData[i].type == "ar") || (mCharData[i].name == "UMP40")) {
 			ar[ar.length] = mCharData[i];
 		}
 		if (mCharData[i].type == "smg") {
 			smg[smg.length] = mCharData[i];
 		}
-		if ((mCharData[i].type == "ar") || (mCharData[i].type == "hg")) {
+		if (((mCharData[i].type == "ar") || (mCharData[i].name == "UMP40")) || (mCharData[i].type == "hg")) {
 			arhg[arhg.length] = mCharData[i];
 		}
 		if ((mCharData[i].type == "smg") || (mCharData[i].type == "hg")) {
@@ -1492,4 +1597,140 @@ function findMGSG5() {	initTable();
 }
 
 	
+
+function findAR1() {
+
+	initTable();
+
+
+	
+
+	// 7 8 9
+	// 4 5 6
+	// 1 2 3
+
+	RESULTLIST = new Array();
+	var hg = new Array();
+	var rf = new Array();
+	var smg = new Array();
+	var ar = new Array();
+	var mg = new Array();
+	var sg = new Array();
+
+	var smghg = new Array();
+	var arhg = new Array();
+
+
+	var combineStr =",";
+	for (var d = 0; d < $(".checkB:checked").length; d++) {
+		combineStr += $(".checkB:checked:eq("+d+")").val() + ",";
+	}
+
+
+	for (var i = 0; i < mCharData.length;i++) {
+
+		if (mCharData[i].version == "cn") continue;
+	
+		//if (mCharData[i].rarity != 5) continue;
+		if (combineStr.indexOf(","+mCharData[i].id+",") === -1) { continue; }
+
+		mCharData[i].used2 = 0;
+		mCharData[i].used3 = 0;
+		mCharData[i].used4 = 0;
+		mCharData[i].used5 = 0;
+		if ((mCharData[i].type == "ar") || (mCharData[i].name == "UMP40")) {
+			ar[ar.length] = mCharData[i];
+		}
+	}
+
+
+	ar.sort(function(a, b){return b.dmgSkill-a.dmgSkill});
+	smg.sort(function(a, b){return b.dmgSkill-a.dmgSkill});
+	arhg.sort(function(a, b){return b.dmgSkill-a.dmgSkill});
+	smghg.sort(function(a, b){return b.dmgSkill-a.dmgSkill});
+
+	
+	loopCore(
+		7,4,1,8,5,
+		ar,
+		ar,
+		ar,
+		ar,
+		ar
+	);
+		
+	
+
+
+}
+
+
+	
+
+function findAR2() {
+
+	initTable();
+
+
+	
+
+	// 7 8 9
+	// 4 5 6
+	// 1 2 3
+
+	RESULTLIST = new Array();
+	var hg = new Array();
+	var rf = new Array();
+	var smg = new Array();
+	var ar = new Array();
+	var mg = new Array();
+	var sg = new Array();
+
+	var smghg = new Array();
+	var arhg = new Array();
+
+
+	var combineStr =",";
+	for (var d = 0; d < $(".checkB:checked").length; d++) {
+		combineStr += $(".checkB:checked:eq("+d+")").val() + ",";
+	}
+
+
+	for (var i = 0; i < mCharData.length;i++) {
+
+		if (mCharData[i].version == "cn") continue;
+	
+		//if (mCharData[i].rarity != 5) continue;
+		if (combineStr.indexOf(","+mCharData[i].id+",") === -1) { continue; }
+
+		mCharData[i].used2 = 0;
+		mCharData[i].used3 = 0;
+		mCharData[i].used4 = 0;
+		mCharData[i].used5 = 0;
+		if ((mCharData[i].type == "ar") || (mCharData[i].name == "UMP40")) {
+			ar[ar.length] = mCharData[i];
+		}
+	}
+
+
+	ar.sort(function(a, b){return b.dmgSkill-a.dmgSkill});
+	smg.sort(function(a, b){return b.dmgSkill-a.dmgSkill});
+	arhg.sort(function(a, b){return b.dmgSkill-a.dmgSkill});
+	smghg.sort(function(a, b){return b.dmgSkill-a.dmgSkill});
+
+	
+	loopCore(
+		7,4,1,5,2,
+		ar,
+		ar,
+		ar,
+		ar,
+		ar
+	);
+		
+	
+
+
+}
+
 

@@ -1484,6 +1484,7 @@ function getCharImgUIObj(id) {
     return img;
 }
 var timeoutCheck = null;
+var previousUrl = "";
 function updatePerformance() {
     var index = 1;
     var dpsSum = 0;
@@ -1580,14 +1581,20 @@ function updatePerformance() {
     preLoadCode["fairy"] = fairy;
 
 	
-	var previousUrl = $("#code").val();
-    var url = [location.protocol, '//', location.host, location.pathname].join('') + "?pre=" + JSON.stringify(preLoadCode) +
+
+    var url = [location.protocol, '//', location.host, location.pathname].join('') + "?pre=" + JSON.stringify(preLoadCode);
+    var urlFull = url +
 			"&repeat=" + $(".skill_control:checked").map(function() { return this.value; }).get().join(',') +"," +
-			$(".friendship").map(function() { return $(this).attr("value"); }).get().join(',');
+			$(".friendship").map(function() { return $(this).attr("value"); }).get().join(',')+",elite,"+
+			$('.battle_control .enemyEliteTarget').is(":checked")+",link,"+mDmgLinkMode +",night,"+ $('.battle_control .battleisNight').is(":checked")+
+			",enemyDodge,"+ $('.battle_control .enemyDodge').val()+
+			",enemyArmor,"+ $('.battle_control .enemyArmor').val();
 
     //20180602
 	if (previousUrl != url) {
 		$("#code").val(url);
+		
+		previousUrl
 		clearTimeout(timeoutCheck);
 		timeoutCheck = setTimeout(function() {
 			var resultArr = dmgNs();
@@ -1602,7 +1609,7 @@ function updatePerformance() {
 
 function setEquipment(grid) {
 	var charObj = mGridToChar[grid];
-
+    var battleisNight = $('.battle_control .battleisNight').is(":checked");
 	//charObj.c.friendship = "friendly";
 
 	if (charObj.type == "rf") {
@@ -1613,7 +1620,7 @@ function setEquipment(grid) {
 
 	if (charObj.type == "hg") {
 		if ((grid == 7) || (grid == 4) || (grid == 1)) {
-			charObj.equipment[1] = 66;
+			charObj.equipment[1] = (battleisNight?16:66);
 			charObj.equipment[2] = 72;
 			charObj.equipment[3] = 40;
 		} else {
@@ -1640,7 +1647,7 @@ function setEquipment(grid) {
 
 	//SEAL
 	if (charObj.type == "ar") {
-		charObj.equipment[1] = 4;
+		charObj.equipment[1] = (battleisNight?16:4);
 		charObj.equipment[2] = 32;
 		charObj.equipment[3] = 58;
 	}
@@ -1648,7 +1655,7 @@ function setEquipment(grid) {
 	if (charObj.type == "smg") { // Xbone
 		charObj.equipment[1] = 58;
 		charObj.equipment[2] = 72;
-		charObj.equipment[3] = 8;
+		charObj.equipment[3] = (battleisNight?16:8);
 	}
 
 	if (charObj.type == "mg") {
@@ -1660,7 +1667,7 @@ function setEquipment(grid) {
 	if (charObj.type == "sg") {
 		charObj.equipment[1] = 44;
 		charObj.equipment[2] = 76;
-		charObj.equipment[3] = 8;
+		charObj.equipment[3] = (battleisNight?16:8);
 	}
 
 	if (charObj.name == "競爭者") {
@@ -1690,6 +1697,10 @@ function setEquipment(grid) {
 	if (charObj.name == "莫辛-納甘") {
 		charObj.equipment[3] = 86;
 	}
+	if (charObj.name == "莫辛-納甘" && charObj.mod) {
+		charObj.equipment[3] = 86;
+		charObj.equipment[2] = 111;
+	}
 	if (charObj.name == "PTRD") {
 		charObj.equipment[3] = 108;
 	}
@@ -1708,11 +1719,11 @@ function setEquipment(grid) {
 	}
 	if (charObj.name == "ST AR-15") {
 		if (charObj.mod) {
-			charObj.equipment[1] = 4;
+			charObj.equipment[1] = (battleisNight?16:4);;
 			charObj.equipment[2] = 100;
 		} else {
 			charObj.equipment[1] = 4;
-			charObj.equipment[2] = 8;
+			charObj.equipment[2] = (battleisNight?16:8);
 		}
 		charObj.equipment[3] = 60;
 	}
@@ -1725,22 +1736,26 @@ function setEquipment(grid) {
 
 	if (charObj.name == "M4 SOPMOD II") {
 		charObj.equipment[1] = 4;
-		charObj.equipment[2] = 8;
+		charObj.equipment[2] = (battleisNight?16:8);
 		charObj.equipment[3] = 32;
 	}
 	
 	if (charObj.name == "56-1式") {
-		charObj.equipment[1] = 85;
+		charObj.equipment[1] = (battleisNight?16:85);
 	}
 	if (charObj.name == "9A-91") {
 		charObj.equipment[1] = 93;
 	}
 	if (charObj.name == "AK-47") {
-		charObj.equipment[1] = 85;
+		charObj.equipment[1] = (battleisNight?16:85);
 	}
 
 	if (charObj.name == "納甘左輪" && charObj.mod) {
-		charObj.equipment[1] = 113;
+		if ((grid == 7) || (grid == 4) || (grid == 1)) {
+			charObj.equipment[1] = (battleisNight?16:113);
+		} else {
+			charObj.equipment[1] = 113;
+		}
 	}
 	if (charObj.name == "FN-49" && charObj.mod) {
 		charObj.equipment[2] = 104;
@@ -1755,7 +1770,15 @@ function setEquipment(grid) {
 		charObj.equipment[1] = 102;
 	}
 	if (charObj.name == "MP-446" && charObj.mod) {
-		charObj.equipment[1] = 114;
+		if ((grid == 7) || (grid == 4) || (grid == 1)) {
+			charObj.equipment[1] = (battleisNight?16:114);
+		} else {
+			charObj.equipment[1] = 113;
+		}
+	}
+	
+	if (charObj.name == "6P62") {
+		charObj.equipment[2] = 20;
 	}
 
 }

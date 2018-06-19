@@ -477,23 +477,23 @@ function startWorker(LOC1,LOC2,LOC3,LOC4,LOC5,
 											//console.log(">" + RESULTLIST[t].charList[r]);
 											if ((doneCount > ARR2_SKIP) && (firstRound == ",")) {
 												for (var x = 0; x < ARR2.length;x++) {
-													if (ARR2[x].id == RESULTLIST[t].charList[1]) {
+													if ((ARR2[x].id == RESULTLIST[t].charList[1]) || (ARR2[x].id == firstCharId)) {
 														ARR2[x].used2++;
 													}
 												}
 											}
 											for (var x = 0; x < ARR3.length;x++) {
-												if (ARR3[x].id == RESULTLIST[t].charList[2]) {
+												if ((ARR3[x].id == RESULTLIST[t].charList[2]) || (ARR3[x].id == firstCharId)) {
 													ARR3[x].used3++;
 												}
 											}
 											for (var x = 0; x < ARR4.length;x++) {
-												if (ARR4[x].id == RESULTLIST[t].charList[3]) {
+												if ((ARR4[x].id == RESULTLIST[t].charList[3]) || (ARR4[x].id == firstCharId)) {
 													ARR4[x].used4++;
 												}
 											}
 											for (var x = 0; x < ARR5.length;x++) {
-												if (ARR5[x].id == RESULTLIST[t].charList[4]) {
+												if ((ARR5[x].id == RESULTLIST[t].charList[4]) || (ARR5[x].id == firstCharId)) {
 													ARR5[x].used5++;
 												}
 											}
@@ -542,7 +542,7 @@ function startWorker(LOC1,LOC2,LOC3,LOC4,LOC5,
 									console.log(4, ARR4[ARR4.length-1].name); 
 									ARR4.pop();
 								}
-								while (ARR5.length-1 > 0 && ARR5[ARR5.length-1].used5 == 0 && ARR4[ARR4.length-1].id != firstCharId) {
+								while (ARR5.length-1 > 0 && ARR5[ARR5.length-1].used5 == 0 && ARR5[ARR5.length-1].id != firstCharId) {
 									console.log(5, ARR5[ARR5.length-1].name); 
 									ARR5.pop();
 								}

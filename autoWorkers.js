@@ -15,6 +15,8 @@ var buffer = 0.9;
 var startTime;
 var started = false;
 var jobId = 0;
+
+var firstCharId = null;
 var $ = function(input) {
 		
 		if (input == ".battle_control .enemyDodge") {
@@ -124,7 +126,8 @@ onmessage = function(e) {
 		return;
 	}
 	
-
+	firstCharId = recieved[8][0].id;
+	//console.log(recieved[8][0]);
 	loopCore(
 				recieved[1], //LOC1,
 				recieved[2], //LOC2,
@@ -428,12 +431,12 @@ function loopCore(
 					RESULTLIST[t].charList[r].used += Math.pow(10, r-3);
 				}*/
 				for (var x = 0; x < ARR4.length;x++) {
-					if (ARR4[x].id == RESULTLIST[t].charList[3].id) {
+					if ((ARR4[x].id == RESULTLIST[t].charList[3].id) || (ARR4[x].id == firstCharId)) {
 						ARR4[x].used4++;
 					}
 				}
 				for (var x = 0; x < ARR5.length;x++) {
-					if (ARR5[x].id == RESULTLIST[t].charList[4].id) {
+					if ((ARR5[x].id == RESULTLIST[t].charList[4].id) || (ARR5[x].id == firstCharId)) {
 						ARR5[x].used5++;
 					}
 				}
@@ -446,12 +449,12 @@ function loopCore(
 		ARR4.sort(function(a, b){return b.used4-a.used4});
 		ARR5.sort(function(a, b){return b.used5-a.used5});
 
-		if ((RESULTLIST.length > 10)&& (RESULTLIST[9].dps > highestDps *0.7)) {
-			while (ARR4.length-1 > 0 && ARR4[ARR4.length-1].used4 < 0.0000001) {
+		if ((RESULTLIST.length > 10) && (RESULTLIST[9].dps > highestDps *0.7)) {
+			while (ARR4.length-1 > 0 && ARR4[ARR4.length-1].used4 < 0.0000001 && ARR4[ARR4.length-1].id != firstCharId) {
 				//console.log("		4 "+ARR4[ARR4.length-1].name); 
 				ARR4.pop();
 			}
-			while (ARR5.length-1 > 0 && ARR5[ARR5.length-1].used5 < 0.0000001) {
+			while (ARR5.length-1 > 0 && ARR5[ARR5.length-1].used5 < 0.0000001 && ARR5[ARR5.length-1].id != firstCharId) {
 				//console.log("		5 "+ARR5[ARR5.length-1].name); 
 				ARR5.pop();
 			}

@@ -1,3 +1,6 @@
+Project has been mothballed since I stopped playing the game and far superior calculators are available that are actively maintained.
+A sincere thanks to everyone that used or contributed to this little project.
+
 # Girls' Frontline calculators
 English fork of ynntk4815's calculators, the original chinese calculators can be found [here](https://ynntk4815.github.io/gf/)
 
